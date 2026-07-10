@@ -1,0 +1,15 @@
+{
+  "name": "Weak Secret",
+  "description": "A JWT signed with a weak, easily guessable secret. Crack it to capture the flag.",
+  "difficulty": "Easy",
+  "category": "Secret Cracking",
+  "points": 100,
+  "tokens": {
+    "given": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNjgwMDAwMDAwLCJyb2xlIjoiZ3Vlc3QifQ.pLBI1nD2VmvB3eT0a1wEJbVjF0cYqZ0Kx3mN4dD5gYk"
+  },
+  "hints": [
+    "The secret is a common English word",
+    "Try a dictionary attack",
+    "The secret has fewer than 10 characters"
+  ]
+}

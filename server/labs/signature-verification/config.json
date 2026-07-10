@@ -1,0 +1,15 @@
+{
+  "name": "Signature Verification",
+  "description": "This token uses the 'none' algorithm — no signature at all. The server still accepts it. Forge a token with no signature to bypass verification and capture the flag.",
+  "difficulty": "Hard",
+  "category": "Algorithm Confusion",
+  "points": 200,
+  "tokens": {
+    "given": "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJhZG1pbiIsIm5hbWUiOiJSb290IFVzZXIiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2ODAwMDAwMDB9."
+  },
+  "hints": [
+    "Decode the header — notice the 'alg' field says 'none'",
+    "The server skips signature verification when alg is 'none'",
+    "Forge a new token with alg:none and an empty signature (header.payload. with nothing after the last dot)"
+  ]
+}

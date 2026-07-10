@@ -1,0 +1,16 @@
+{
+  "name": "Payload Tampering",
+  "description": "Two tokens — one is the original, the other has a tampered payload. The signature no longer matches. Re-sign the modified token to make it valid and capture the flag.",
+  "difficulty": "Medium",
+  "category": "Signature Bypass",
+  "points": 150,
+  "tokens": {
+    "given": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwibmFtZSI6IkpvaG4gRG9lIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjgwMDAwMDAwfQ.invalid_signature_here",
+    "original": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwibmFtZSI6IkpvaG4gRG9lIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2ODAwMDAwMDB9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  },
+  "hints": [
+    "Decode both tokens and compare the payloads — the role claim changed",
+    "The given token's signature doesn't match the modified payload",
+    "Use the Generator Tool to re-sign the tampered payload with the correct secret"
+  ]
+}

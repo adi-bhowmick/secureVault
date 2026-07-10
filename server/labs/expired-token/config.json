@@ -1,0 +1,15 @@
+{
+  "name": "Expired Token",
+  "description": "This JWT expired hours ago — the server will reject it. Decode the token, find the expired 'exp' claim, and forge a fresh token with a future expiration to capture the flag.",
+  "difficulty": "Easy",
+  "category": "Token Validation",
+  "points": 100,
+  "tokens": {
+    "given": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwibmFtZSI6IkpvaG4gRG9lIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjgwMDAwMDAwLCJleHAiOjE2ODAwMDM2MDB9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  },
+  "hints": [
+    "The red banner shows this token expired long ago — the 'exp' claim is far in the past",
+    "The Decoder Tool reveals the payload: exp:1680003600 which is March 2023",
+    "Servers reject tokens with exp < now — try forging a new token with a future exp using the Generator Tool"
+  ]
+}

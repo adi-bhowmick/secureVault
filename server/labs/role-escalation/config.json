@@ -1,0 +1,15 @@
+{
+  "name": "Role Escalation",
+  "description": "Your token has role: user but the server trusts any valid signature. Forge a new token with role: admin to escalate privileges and capture the flag.",
+  "difficulty": "Medium",
+  "category": "Privilege Escalation",
+  "points": 150,
+  "tokens": {
+    "given": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwibmFtZSI6IkpvaG4gRG9lIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2ODAwMDAwMDB9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  },
+  "hints": [
+    "Decode your token — the role claim is 'user', not 'admin'",
+    "The server only checks that the signature is valid, not what role you claim",
+    "Use the Generator Tool to forge a new token with role: admin and a valid signature"
+  ]
+}

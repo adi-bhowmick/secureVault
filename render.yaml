@@ -3,8 +3,8 @@ services:
     name: jwtlab
     runtime: node
     plan: free
-    buildCommand: cd server && npm install && cd ../client && npm install && npm run build
-    startCommand: cd server && node src/index.js
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production

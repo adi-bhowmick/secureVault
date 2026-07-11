@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import LandingPage from './pages/LandingPage.jsx';
@@ -7,6 +7,7 @@ import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import DashboardLayout from './layouts/DashboardLayout.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import BootScreen from './components/BootScreen.jsx';
 
 const JWTDecoder = lazy(() => import('./pages/JWTDecoder.jsx'));
 const JWTGenerator = lazy(() => import('./pages/JWTGenerator.jsx'));
@@ -27,8 +28,12 @@ const PageLoader = () => (
 );
 
 const App = () => {
+  const [booted, setBooted] = useState(false);
+  const handleBoot = useCallback(() => setBooted(true), []);
+
   return (
     <BrowserRouter>
+      {!booted && <BootScreen onComplete={handleBoot} />}
       <AuthProvider>
         <Suspense fallback={<PageLoader />}>
           <Routes>

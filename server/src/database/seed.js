@@ -32,7 +32,10 @@ const seed = async () => {
 
   const result = await pool.query('SELECT COUNT(*) as count FROM achievements');
   console.log(`Done. Total achievements: ${result.rows[0].count}`);
-  await pool.end();
 };
 
-seed();
+export default seed;
+
+if (process.argv[1] && process.argv[1].endsWith('seed.js')) {
+  seed().then(() => pool.end());
+}

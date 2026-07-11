@@ -19,10 +19,10 @@ const Achievements = lazy(() => import('./pages/Achievements.jsx'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard.jsx'));
 
 const PageLoader = () => (
-  <div className="flex items-center justify-center h-64">
-    <div className="flex items-center gap-3 text-neutral-500">
-      <div className="w-4 h-4 border-2 border-neutral-600 border-t-white rounded-full animate-spin" />
-      <span className="text-sm font-mono">Loading...</span>
+  <div className="flex items-center justify-center h-screen bg-black">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-8 h-8 border-2 border-green-500/20 border-t-green-400 rounded-full animate-spin" />
+      <span className="text-xs font-mono text-neutral-600">Loading...</span>
     </div>
   </div>
 );

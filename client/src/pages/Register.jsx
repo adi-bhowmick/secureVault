@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext.jsx';
+import logo from '../assets/logo.png';
 
 const GlowOrb = ({ className }) => (
   <div className={`absolute rounded-full blur-[120px] pointer-events-none ${className}`} />
@@ -74,9 +75,7 @@ const Register = () => {
       {/* Navbar */}
       <nav className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-6 lg:px-12 py-5 border-b border-white/[0.04]">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-md bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
-            <span className="text-black text-xs font-bold font-mono">SV</span>
-          </div>
+          <img src={logo} alt="secureVault" className="w-7 h-7 rounded-md object-cover" />
           <span className="font-semibold text-sm tracking-tight text-white">secureVault</span>
         </Link>
       </nav>

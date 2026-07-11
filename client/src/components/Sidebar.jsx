@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 const links = [
   { to: '/dashboard', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
@@ -28,9 +29,7 @@ const Sidebar = ({ open, onClose }) => {
       >
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-6 py-5 border-b border-white/[0.06]">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
-            <span className="text-black text-xs font-bold font-mono">SV</span>
-          </div>
+          <img src={logo} alt="secureVault" className="w-8 h-8 rounded-lg object-cover" />
           <span className="font-semibold text-sm tracking-tight">secureVault</span>
         </div>
 

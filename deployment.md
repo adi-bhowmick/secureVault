@@ -1,30 +1,85 @@
 # JWTLab Deployment Guide
 
-## Prerequisites
+## Deploy to Render (Recommended)
+
+### One-Click Deploy
+
+1. Push your code to GitHub (already done)
+2. Go to [render.com](https://render.com) and sign up / log in
+3. Click **New +** > **Blueprint**
+4. Select your `secureVault` repo
+5. Render detects `render.yaml` and provisions everything:
+   - A **free PostgreSQL** database (`jwtlab-db`)
+   - A **free Web Service** (`jwtlab`)
+6. After the service is created, go to **Environment** tab and set:
+   - `CORS_ORIGIN` = your Render URL (e.g. `https://jwtlab.onrender.com`)
+7. The service will auto-deploy. First deploy takes ~2-3 minutes.
+
+### After First Deploy — Seed the Database
+
+Render doesn't run the seed script automatically. After the first successful deploy:
+
+1. Go to your **jwtlab** service > **Shell** tab
+2. Run:
+   ```bash
+   node src/database/seed.js
+   ```
+3. This populates the achievements table.
+
+### Environment Variables (set automatically by render.yaml)
+
+| Variable | Source | Notes |
+|---|---|---|
+| `NODE_ENV` | Hardcoded `production` | Enables static file serving |
+| `DB_HOST` | From `jwtlab-db` | Auto-linked |
+| `DB_PORT` | From `jwtlab-db` | Auto-linked |
+| `DB_NAME` | From `jwtlab-db` | Auto-linked |
+| `DB_USER` | From `jwtlab-db` | Auto-linked |
+| `DB_PASSWORD` | From `jwtlab-db` | Auto-linked |
+| `JWT_SECRET` | Auto-generated | Render creates a random secret |
+| `JWT_EXPIRES_IN` | Hardcoded `7d` | Token expiry |
+| `CORS_ORIGIN` | **You set this** | Your Render URL with `https://` |
+
+### Manual Deploy (if not using Blueprint)
+
+If you prefer manual setup instead of `render.yaml`:
+
+1. Create a **PostgreSQL** database on Render (free tier)
+2. Create a **Web Service** with:
+   - **Build Command:** `cd server && npm install && cd ../client && npm install && npm run build`
+   - **Start Command:** `cd server && node src/index.js`
+   - **Environment:** Node
+3. Add all env vars from the table above manually
+
+### Updating the App
+
+Render auto-deploys on every push to `main`. Just push:
+
+```bash
+git push origin main
+```
+
+---
+
+## Local Development
+
+### Prerequisites
 
 - Node.js 18+
 - PostgreSQL 15+
 - npm 9+
 
----
-
-## 1. Database Setup
+### Database Setup
 
 ```bash
-# Create the database
 createdb securevault
-
-# Run the schema
 psql -U postgres -d securevault -f schema.sql
-
-# Seed achievements
-cd server
-node src/database/seed.js
+cd server && node src/database/seed.js
 ```
 
-## 2. Server Environment Variables
+### Environment Variables
 
-Create `server/.env` (do **not** commit this file):
+Create `server/.env`:
 
 ```env
 PORT=5000
@@ -35,139 +90,29 @@ DB_PASSWORD=<your-secure-password>
 DB_PORT=5432
 JWT_SECRET=<generate-a-strong-random-secret>
 JWT_EXPIRES_IN=24h
-CORS_ORIGIN=https://yourdomain.com
+CORS_ORIGIN=http://localhost:5173
 ```
 
-Generate a strong JWT secret:
+### Run
 
 ```bash
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-```
-
-## 3. Install Dependencies
-
-```bash
-# Server
-cd server && npm install
-
-# Client
-cd ../client && npm install
-```
-
-## 4. Development
-
-```bash
-# Terminal 1 — Server
+# Terminal 1
 cd server && npm run dev
 
-# Terminal 2 — Client
+# Terminal 2
 cd client && npm run dev
 ```
 
-The Vite dev server proxies `/api` requests to `localhost:5000`.
-
-## 5. Production Build
-
-```bash
-# Build the client
-cd client && npm run build
-
-# The output is in client/dist/
-```
-
-## 6. Production Server
-
-Serve the client build from Express:
-
-```js
-// Add to server/src/index.js
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// After app.use('/api', router):
-app.use(express.static(path.join(__dirname, '../../client/dist')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
-});
-```
-
-Then start with:
-
-```bash
-cd server && npm start
-```
-
-## 7. Reverse Proxy (Nginx)
-
-```nginx
-server {
-    listen 80;
-    server_name yourdomain.com;
-
-    location / {
-        proxy_pass http://localhost:5000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-## 8. Production Security Checklist
-
-Before deploying, address these items:
-
-| Item | Action |
-|---|---|
-| **JWT Secret** | Replace `your_jwt_secret_key_here` with a strong random value (see step 2) |
-| **CORS** | Set `CORS_ORIGIN` env var to your production domain (e.g. `https://yourdomain.com`) |
-| **Rate Limiting** | Add `express-rate-limit` to auth and flag submission endpoints |
-| **Security Headers** | Add `helmet` middleware: `app.use(helmet())` |
-| **HTTPS** | Use Let's Encrypt or your provider's SSL certificate |
-| **DB Credentials** | Use a strong password; never use defaults in production |
-| **.env** | Ensure `.env` is not committed to git; rotate credentials if it was |
-
-## 9. Optional: Docker
-
-```dockerfile
-# Dockerfile (root)
-FROM node:18-alpine AS builder
-WORKDIR /app
-COPY client/package*.json ./client/
-RUN cd client && npm ci
-COPY client/ ./client/
-RUN cd client && npm run build
-
-FROM node:18-alpine
-WORKDIR /app
-COPY server/package*.json ./server/
-RUN cd server && npm ci --omit=dev
-COPY server/ ./server/
-COPY --from=builder /app/client/dist ./client/dist
-COPY schema.sql ./schema.sql
-EXPOSE 5000
-CMD ["node", "server/src/index.js"]
-```
-
-## 10. Database Migrations
-
-For schema changes in the future, create migration files in a `server/migrations/` directory and apply them in order. The current schema is in `schema.sql` at the project root.
+---
 
 ## Troubleshooting
 
 | Issue | Fix |
 |---|---|
-| `ECONNREFUSED` on startup | Ensure PostgreSQL is running and credentials in `.env` are correct |
-| `JWT_SECRET is not defined` | Add `JWT_SECRET` to `server/.env` |
-| Client build fails | Run `cd client && npm install` first |
-| Labs not loading | Ensure `server/labs/` directory exists with valid `config.json` files |
-| Port already in use | Change `PORT` in `server/.env` or stop the conflicting process |
+| Render deploy fails | Check build logs; ensure `render.yaml` is at repo root |
+| Database connection error | Verify the DB is linked in Render dashboard > Environment |
+| `jwtlab-db` not found | Create the database first, then link it to the web service |
+| Blank page on deploy | Set `CORS_ORIGIN` to your Render URL in env vars |
+| Seed script not run | Run `node src/database/seed.js` in Render Shell after first deploy |
+| Labs not loading | Ensure `server/labs/` directory is committed to git |
+| Port already in use locally | Change `PORT` in `server/.env` |

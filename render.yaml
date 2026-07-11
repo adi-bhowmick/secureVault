@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: jwtlab
+    runtime: node
+    plan: free
+    buildCommand: cd server && npm install && cd ../client && npm install && npm run build
+    startCommand: cd server && node src/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        fromDatabase:
+          name: jwtlab-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: jwtlab-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: jwtlab-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: jwtlab-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: jwtlab-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        sync: false
+
+databases:
+  - name: jwtlab-db
+    plan: free
+    databaseName: jwtlab

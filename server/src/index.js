@@ -5,12 +5,13 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import router from './routes/index.js';
 import labService from './services/labService.js';
+import initDb from './database/initDb.js';
 import seed from './database/seed.js';
 
 dotenv.config();
 
 labService.init();
-seed().catch(() => {});
+initDb().then(() => seed()).catch(() => {});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

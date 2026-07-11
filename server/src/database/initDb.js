@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 const initDb = async () => {
   try {
-    const schemaPath = path.join(__dirname, '../../schema.sql');
+    const schemaPath = path.join(__dirname, '../../../schema.sql');
     const schema = fs.readFileSync(schemaPath, 'utf-8');
     await pool.query(schema);
     console.log('Database schema applied');
